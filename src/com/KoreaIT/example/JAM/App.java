@@ -78,6 +78,8 @@ public class App {
 					System.out.println("== 게시물 수정 ==");
 					int id = Integer.parseInt(cmd.split(" ")[2]);
 
+					ExistArticle(conn, id);
+
 					System.out.printf("수정할 제목 : ");
 					String title = sc.nextLine();
 					System.out.printf("수정할 내용 : ");
@@ -87,13 +89,42 @@ public class App {
 
 					sql.append("UPDATE article");
 					sql.append("SET updateDate = NOW()");
-					sql.append(", title = '" + title + "'");
-					sql.append(", `body` = '" + body + "'");
-					sql.append("WHERE id = " + id + ";");
+					sql.append(", title = ?'", title);
+					sql.append(", `body` = ?'", body);
+					sql.append("WHERE id = ?", id);
 
 					DBUtil.update(conn, sql);
 
 					System.out.printf("%d번 글이 수정되었습니다\n", id);
+				} else if (cmd.startsWith("article detail ")) {
+					int id = Integer.parseInt(cmd.split(" ")[2]);
+
+					List<Article> articles = new ArrayList<>();
+
+					SecSql sql = new SecSql();
+
+					sql.append("SELECT A.title");
+					sql.append("A.regdate,");
+					sql.append("A.`body`");
+					sql.append("FROM article AS A");
+					sql.append("WHERE id = ?", id);
+
+					Map<String, Object> articleDetail = DBUtil.selectRow(conn, sql);
+					System.out.println("작동확인 5");
+
+					articles.add(new Article(articleDetail));
+					System.out.println("작동확인 6");
+
+					if (articles.size() == 0) {
+						System.out.println("게시물이 없습니다");
+						continue;
+					}
+
+					Article article = articles.get(id);
+
+					System.out.printf("제목 :	%s\n", article.title);
+					System.out.printf("작성일 : 	%s\n", article.regDate);
+					System.out.printf("내용 : 	%s\n", article.body);
 				}
 
 				if (cmd.equals("exit")) {
@@ -118,5 +149,20 @@ public class App {
 		}
 
 		sc.close();
+	}
+
+	public void ExistArticle(Connection conn, int id) {
+		SecSql sql = new SecSql();
+
+		sql.append("SELECT COUNT(*)");
+		sql.append("FROM article");
+		sql.append("WHERE id = ?", id);
+
+		int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+
+		if (articlesCount == 0) {
+			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
+			return;
+		}
 	}
 }

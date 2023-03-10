@@ -147,7 +147,7 @@ WHERE id = 3;
 # 데이터 조회(*)
 SELECT *
 	FROM article;
-
+-------------------------------------------------------------------------------------------------
 # 기존에 a2 데이터베이스가 존재 한다면 삭제
 DROP DATABASE IF EXISTS a2;
 
@@ -399,7 +399,7 @@ SET deptId = 1;
 UPDATE emp
 SET deptId = 2
 WHERE id = 3;
-
+-------------------------------------------------------------------------------------------------
 # a5 데이터베이스 삭제/생성/선택
 DROP DATABASE IF EXISTS a5;
 CREATE DATABASE a5;
@@ -610,13 +610,14 @@ SELECT e.id AS 사원번호
 	
 SELECT DATE('2023-03-09 15:22:00');
 SELECT TIME('2023-03-09 15:22:00');
-
+-------------------------------------------------------------------------------------------------
 # a6 DB 삭제/생성/선택
 DROP DATABASE IF EXISTS a6;
 CREATE DATABASE a6;
 USE a6;
 
 # 부서(홍보, 기획)
+# 주의 : INT(10)이 10바이트라는 강사의 설명은 잘못 되었습니다. 그냥 INT라고 쓰시면 됩니다.
 CREATE TABLE dept (
     id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     regDate DATETIME NOT NULL,
@@ -632,6 +633,7 @@ SET regDate = NOW(),
 `name` = '기획';
 
 # 사원(홍길동/홍보/5000만원, 홍길순/홍보/6000만원, 임꺽정/기획/4000만원)
+# 주의 : INT(10)이 10바이트라는 강사의 설명은 잘못 되었습니다. 그냥 INT라고 쓰시면 됩니다.
 CREATE TABLE emp (
     id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     regDate DATETIME NOT NULL,
@@ -658,6 +660,9 @@ SET regDate = NOW(),
 deptId = 2,
 salary = 4000;
 
+SELECT * FROM emp;
+SELECT * FROM dept;
+
 # 사원 수 출력
 SELECT COUNT(*)
 FROM emp;
@@ -667,7 +672,7 @@ SELECT MAX(id)
 FROM emp;
 
 # 가장 고액 연봉
-SELECT MAX(salary)
+SELECT `name`, MAX(salary)
 FROM emp;
 
 # 가장 저액 연봉
@@ -698,6 +703,8 @@ SELECT deptId, AVG(salary)
 FROM emp
 GROUP BY deptId;
 
+# SELECT절 뒤에 오는 컬럼명이 여러개일 때 집계함수가 사용된 컬럼을 제외한 모든 컬럼은 GROUP BY에 언급해줘야 한다.
+
 # 부서별, 부서명, 사원리스트, 평균연봉, 최고연봉, 최소연봉, 사원수
 ## V1(조인 안한 버전)
 SELECT E.deptId AS 부서번호,
@@ -709,6 +716,9 @@ COUNT(*) AS 사원수
 FROM emp AS E
 GROUP BY E.deptId;
 
+# GROUP BY에 언급된 컬럼은 SELECT절에 존재해야한다.
+# SELECT / FROM / JOIN / ON / WHERE / GROUP BY / HAVING / ORDER BY
+
 ## V2(조인해서 부서명까지 나오는 버전)
 SELECT D.name AS 부서,
 GROUP_CONCAT(E.name) AS 사원리스트,
@@ -719,7 +729,7 @@ COUNT(*) AS 사원수
 FROM emp AS E
 INNER JOIN dept AS D
 ON E.deptId = D.id
-GROUP BY E.deptId;
+GROUP BY D.name;
 
 ## V3(V2에서 평균연봉이 5000이상인 부서로 추리기)
 SELECT D.name AS 부서,

@@ -48,3 +48,5 @@ loginPw = 'test1',
 `name` = 'test',
 phoneNum = '00000000000';
 
+ALTER TABLE `member` MODIFY COLUMN loginId VARCHAR(50) NOT NULL UNIQUE;
+ALTER TABLE `member` MODIFY COLUMN phoneNum VARCHAR(50) NOT NULL UNIQUE;

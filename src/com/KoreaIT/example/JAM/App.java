@@ -11,7 +11,6 @@ import java.util.Scanner;
 import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
-
 public class App {
 	public void run() {
 		Scanner sc = new Scanner(System.in);
@@ -90,9 +89,9 @@ public class App {
 						System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
 						continue;
 					}
-					
+
 					System.out.println("== 게시물 수정 ==");
-					
+
 					System.out.printf("수정할 제목 : ");
 					String title = sc.nextLine().trim();
 					System.out.printf("수정할 내용 : ");
@@ -111,20 +110,20 @@ public class App {
 					System.out.printf("%d번 글이 수정되었습니다\n", id);
 				} else if (cmd.startsWith("article detail ")) {
 					int id = Integer.parseInt(cmd.split(" ")[2]);
-					
+
 					SecSql sql = new SecSql();
 
 					sql.append("SELECT *");
 					sql.append("FROM article");
 					sql.append("WHERE id = ?", id);
-					
+
 					Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
-					
+
 					if (articleMap.isEmpty()) {
 						System.out.printf("%d번 게시글은 존재하지 않습니다.", id);
 						continue;
 					}
-					
+
 					System.out.printf("==== %d번 게시글 상세보기 ====\n", id);
 
 					Article article = new Article(articleMap);
@@ -135,7 +134,7 @@ public class App {
 					System.out.printf("내용 : 	%s\n", article.body);
 				} else if (cmd.startsWith("article delete ")) {
 					int id = Integer.parseInt(cmd.split(" ")[2]);
-					
+
 					SecSql sql = new SecSql();
 
 					sql.append("SELECT COUNT(*)");
@@ -148,14 +147,14 @@ public class App {
 						System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
 						continue;
 					}
-					
+
 					sql = new SecSql();
-					
+
 					sql.append("DELETE FROM article");
 					sql.append("WHERE id = ?", id);
 
 					DBUtil.delete(conn, sql);
-					
+
 					System.out.printf("%d번 글이 삭제되었습니다\n", id);
 				} else if (cmd.equals("member join")) {
 					String loginId = null;
@@ -163,39 +162,58 @@ public class App {
 					String loginPwChk = null;
 					String name = null;
 					String phoneNum = null;
+
+					SecSql sql = new SecSql();
+
 					System.out.println("== 회원 가입 ==");
-					
+
 					while (true) {
 						System.out.printf("아이디 : ");
 						loginId = sc.nextLine().trim();
-						
+
 						if (loginId.length() == 0) {
 							System.out.println("아이디를 입력해주세요");
 							continue;
 						}
+
+						sql = new SecSql();
+
+						sql.append("SELECT COUNT(loginId) > 0");
+						sql.append("FROM `member`");
+						sql.append("WHERE loginId = ?", loginId);
+
+						boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+
+						if (isLoginIdDup) {
+							System.out.println("사용중인 아이디입니다");
+							System.out.println("다른 아이디를 입력해주세요");
+							continue;
+						}
+						System.out.println("사용 가능한 아이디입니다.");
+
 						break;
 					}
-					
+
 					while (true) {
 						System.out.printf("비밀번호 : ");
 						loginPw = sc.nextLine().trim();
-						
+
 						if (loginPw.length() == 0) {
 							System.out.println("비밀번호를 입력해주세요");
 							continue;
 						}
-						
+
 						boolean loginPwCheck = true;
-						
+
 						while (true) {
 							System.out.printf("비밀번호 확인 : ");
 							loginPwChk = sc.nextLine().trim();
-							
+
 							if (loginPwChk.length() == 0) {
 								System.out.println("비밀번호 확인을 입력해주세요");
 								continue;
 							}
-							
+
 							if (loginPw.equals(loginPwChk) == false) {
 								System.out.println("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
 								loginPwCheck = false;
@@ -209,7 +227,7 @@ public class App {
 					while (true) {
 						System.out.printf("이름 : ");
 						name = sc.nextLine().trim();
-						
+
 						if (name.length() == 0) {
 							System.out.println("이름을 입력해주세요");
 							continue;
@@ -219,15 +237,32 @@ public class App {
 					while (true) {
 						System.out.printf("전화번호 : ");
 						phoneNum = sc.nextLine().trim();
-						
+
 						if (phoneNum.length() == 0) {
 							System.out.println("전화번호를 입력해주세요");
 							continue;
 						}
+
+						sql = new SecSql();
+
+						sql.append("SELECT COUNT(phoneNum) > 0");
+						sql.append("FROM `member`");
+						sql.append("WHERE phoneNum = ?", phoneNum);
+
+						boolean isPhoneNumDup = DBUtil.selectRowBooleanValue(conn, sql);
+
+						if (isPhoneNumDup) {
+							System.out.println("사용중인 전화번호입니다");
+							System.out.println("다른 전화번호를 입력해주세요");
+							continue;
+						}
+
+						System.out.println("사용 가능한 전화번호입니다.");
+
 						break;
 					}
 
-					SecSql sql = new SecSql();
+					sql = new SecSql();
 
 					sql.append("INSERT INTO member");
 					sql.append("SET regDate = NOW()");

@@ -11,6 +11,7 @@ import java.util.Scanner;
 import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
+
 public class App {
 	public void run() {
 		Scanner sc = new Scanner(System.in);
@@ -75,22 +76,34 @@ public class App {
 						System.out.printf("%d	|	%s\n", article.id, article.title);
 					}
 				} else if (cmd.startsWith("article modify ")) {
-					System.out.println("== 게시물 수정 ==");
 					int id = Integer.parseInt(cmd.split(" ")[2]);
 
-					ExistArticle(conn, id);
+					SecSql sql = new SecSql();
 
+					sql.append("SELECT COUNT(*)");
+					sql.append("FROM article");
+					sql.append("WHERE id = ?", id);
+
+					int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+
+					if (articlesCount == 0) {
+						System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
+						continue;
+					}
+					
+					System.out.println("== 게시물 수정 ==");
+					
 					System.out.printf("수정할 제목 : ");
 					String title = sc.nextLine();
 					System.out.printf("수정할 내용 : ");
 					String body = sc.nextLine();
 
-					SecSql sql = new SecSql();
+					sql = new SecSql();
 
 					sql.append("UPDATE article");
 					sql.append("SET updateDate = NOW()");
-					sql.append(", title = ?'", title);
-					sql.append(", `body` = ?'", body);
+					sql.append(", title = ?", title);
+					sql.append(", `body` = ?", body);
 					sql.append("WHERE id = ?", id);
 
 					DBUtil.update(conn, sql);
@@ -98,33 +111,62 @@ public class App {
 					System.out.printf("%d번 글이 수정되었습니다\n", id);
 				} else if (cmd.startsWith("article detail ")) {
 					int id = Integer.parseInt(cmd.split(" ")[2]);
-
-					List<Article> articles = new ArrayList<>();
-
+					
 					SecSql sql = new SecSql();
 
-					sql.append("SELECT A.title");
-					sql.append("A.regdate,");
-					sql.append("A.`body`");
-					sql.append("FROM article AS A");
+					sql.append("SELECT *");
+					sql.append("FROM article");
 					sql.append("WHERE id = ?", id);
-
-					Map<String, Object> articleDetail = DBUtil.selectRow(conn, sql);
-					System.out.println("작동확인 5");
-
-					articles.add(new Article(articleDetail));
-					System.out.println("작동확인 6");
-
-					if (articles.size() == 0) {
-						System.out.println("게시물이 없습니다");
+					
+					Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+					
+					if (articleMap.isEmpty()) {
+						System.out.printf("%d번 게시글은 존재하지 않습니다.", id);
 						continue;
 					}
+					
+					System.out.printf("==== %d번 게시글 상세보기 ====\n", id);
 
-					Article article = articles.get(id);
+					Article article = new Article(articleMap);
 
 					System.out.printf("제목 :	%s\n", article.title);
-					System.out.printf("작성일 : 	%s\n", article.regDate);
+					System.out.printf("작성날짜 : %s\n", article.regDate);
+					System.out.printf("수정날짜 : %s\n", article.updateDate);
 					System.out.printf("내용 : 	%s\n", article.body);
+				} else if (cmd.startsWith("article delete ")) {
+					int id = Integer.parseInt(cmd.split(" ")[2]);
+					
+					SecSql sql = new SecSql();
+
+					sql.append("SELECT COUNT(*)");
+					sql.append("FROM article");
+					sql.append("WHERE id = ?", id);
+
+					int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+
+					if (articlesCount == 0) {
+						System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
+						continue;
+					}
+					
+					sql = new SecSql();
+					
+					sql.append("DELETE FROM article");
+					sql.append("WHERE id = ?", id);
+
+					DBUtil.delete(conn, sql);
+					
+					System.out.printf("%d번 글이 삭제되었습니다\n", id);
+				} else if (cmd.equals("member join")) {
+					
+					SecSql sql = new SecSql();
+
+					sql.append("DELETE FROM article");
+					sql.append("WHERE id = ?");
+
+					DBUtil.delete(conn, sql);
+					
+					System.out.printf("%d번 글이 삭제되었습니다\n");
 				}
 
 				if (cmd.equals("exit")) {
@@ -149,20 +191,5 @@ public class App {
 		}
 
 		sc.close();
-	}
-
-	public void ExistArticle(Connection conn, int id) {
-		SecSql sql = new SecSql();
-
-		sql.append("SELECT COUNT(*)");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
-
-		int articlesCount = DBUtil.selectRowIntValue(conn, sql);
-
-		if (articlesCount == 0) {
-			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
-			return;
-		}
 	}
 }

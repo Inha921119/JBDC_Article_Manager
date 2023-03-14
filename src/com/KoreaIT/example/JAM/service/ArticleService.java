@@ -27,7 +27,11 @@ public class ArticleService {
 		for (Map<String, Object> articleMap : articleListMap) {
 			articles.add(new Article(articleMap));
 		}
-		return null;
+		return articles;
+	}
+	
+	public Map<String, Object> getArticle(int id) {
+		return articleDao.getArticle(id);
 	}
 
 	public int isExistArticle(int id) {
@@ -36,5 +40,9 @@ public class ArticleService {
 
 	public void doModify(int id, String title, String body) {
 		articleDao.doModify(id, title, body);
+	}
+
+	public void doDelete(int id) {
+		articleDao.doDelete(id);
 	}
 }

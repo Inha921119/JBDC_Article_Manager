@@ -192,7 +192,7 @@ public class App {
 						System.out.println("사용 가능한 아이디입니다.");
 
 						break;
-					}
+					} 
 
 					while (true) {
 						System.out.printf("비밀번호 : ");
@@ -275,6 +275,63 @@ public class App {
 					DBUtil.insert(conn, sql);
 
 					System.out.printf("%s님 회원가입이 완료되었습니다.\n", loginId);
+				} else if (cmd.equals("member login")) {
+					String loginId = null;
+					String loginPw = null;
+
+					SecSql sql = new SecSql();
+
+					System.out.println("== 회원 로그인 ==");
+
+					while (true) {
+						System.out.printf("아이디 : ");
+						loginId = sc.nextLine().trim();
+
+						if (loginId.length() == 0) {
+							System.out.println("아이디를 입력해주세요");
+							continue;
+						}
+
+						sql = new SecSql();
+
+						sql.append("SELECT COUNT(loginId) > 0");
+						sql.append("FROM `member`");
+						sql.append("WHERE loginId = ?", loginId);
+
+						boolean isLoginIdChk = DBUtil.selectRowBooleanValue(conn, sql);
+
+						if (isLoginIdChk) {
+							break;
+						}
+						System.out.println("아이디를 확인해주세요");
+					} 
+
+					while (true) {
+						System.out.printf("비밀번호 : ");
+						loginPw = sc.nextLine().trim();
+
+						if (loginPw.length() == 0) {
+							System.out.println("비밀번호를 입력해주세요");
+							continue;
+						}
+
+						sql = new SecSql();
+
+						sql.append("SELECT *");
+						sql.append("FROM `member`");
+						sql.append("WHERE loginId = ?", loginId);
+
+						Map<String, Object> memberMap = DBUtil.selectRow(conn, sql);
+
+						Member member = new Member(memberMap);
+
+						if (member.loginPw.equals(loginPw)) {
+							System.out.println("로그인에 성공하였습니다.");
+							break;
+						}
+						System.out.println("비밀번호를 확인해주세요");
+					}
+
 				}
 
 				if (cmd.equals("exit")) {

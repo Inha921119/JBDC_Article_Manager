@@ -5,15 +5,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Member;
-import com.KoreaIT.example.JAM.util.DBUtil;
-import com.KoreaIT.example.JAM.util.SecSql;
+import com.KoreaIT.example.JAM.service.MemberService;
 
-public class MemberController {
-	private Connection conn;
-	private Scanner sc;
+public class MemberController extends Controller {
+	private MemberService memberService;
 	
 	public MemberController (Connection conn, Scanner sc) {
-		this.conn = conn;
+		this.memberService = new MemberService(conn);
 		this.sc = sc;
 	}
 	public void doJoin () {
@@ -22,8 +20,6 @@ public class MemberController {
 		String loginPwChk = null;
 		String name = null;
 		String phoneNum = null;
-
-		SecSql sql = new SecSql();
 
 		System.out.println("== 회원 가입 ==");
 
@@ -36,13 +32,7 @@ public class MemberController {
 				continue;
 			}
 
-			sql = new SecSql();
-
-			sql.append("SELECT COUNT(loginId) > 0");
-			sql.append("FROM `member`");
-			sql.append("WHERE loginId = ?", loginId);
-
-			boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+			boolean isLoginIdDup = memberService.isLoginIdDup(loginId); 
 
 			if (isLoginIdDup) {
 				System.out.println("사용중인 아이디입니다");
@@ -103,13 +93,7 @@ public class MemberController {
 				continue;
 			}
 
-			sql = new SecSql();
-
-			sql.append("SELECT COUNT(phoneNum) > 0");
-			sql.append("FROM `member`");
-			sql.append("WHERE phoneNum = ?", phoneNum);
-
-			boolean isPhoneNumDup = DBUtil.selectRowBooleanValue(conn, sql);
+			boolean isPhoneNumDup = memberService.isPhoneNumDup(phoneNum);
 
 			if (isPhoneNumDup) {
 				System.out.println("사용중인 전화번호입니다");
@@ -122,26 +106,14 @@ public class MemberController {
 			break;
 		}
 
-		sql = new SecSql();
-
-		sql.append("INSERT INTO member");
-		sql.append("SET regDate = NOW()");
-		sql.append(", updateDate = NOW()");
-		sql.append(", loginId = ?", loginId);
-		sql.append(", loginPw = ?", loginPw);
-		sql.append(", `name` = ?", name);
-		sql.append(", phoneNum = ?", phoneNum);
-
-		DBUtil.insert(conn, sql);
+		
+		memberService.doJoin(loginId, loginPw, name, phoneNum);
 
 		System.out.printf("%s님 회원가입이 완료되었습니다.\n", loginId);
 	}
 	public void doLogin () {
 		String loginId = null;
 		String loginPw = null;
-
-		SecSql sql = new SecSql();
-
 		System.out.println("== 회원 로그인 ==");
 
 		while (true) {
@@ -152,14 +124,8 @@ public class MemberController {
 				System.out.println("아이디를 입력해주세요");
 				continue;
 			}
-
-			sql = new SecSql();
-
-			sql.append("SELECT COUNT(loginId) > 0");
-			sql.append("FROM `member`");
-			sql.append("WHERE loginId = ?", loginId);
-
-			boolean isLoginIdChk = DBUtil.selectRowBooleanValue(conn, sql);
+			
+			boolean isLoginIdChk = memberService.isLoginIdDup(loginId);
 
 			if (isLoginIdChk) {
 				break;
@@ -176,14 +142,8 @@ public class MemberController {
 				continue;
 			}
 
-			sql = new SecSql();
-
-			sql.append("SELECT *");
-			sql.append("FROM `member`");
-			sql.append("WHERE loginId = ?", loginId);
-
-			Map<String, Object> memberMap = DBUtil.selectRow(conn, sql);
-
+			Map<String, Object> memberMap = memberService.getMemberByLoginId(loginId);
+					
 			Member member = new Member(memberMap);
 
 			if (member.loginPw.equals(loginPw)) {

@@ -7,16 +7,15 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Article;
+import com.KoreaIT.example.JAM.service.ArticleService;
 import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
-public class ArticleController {
-	
-	private Connection conn;
-	private Scanner sc;
-	
+public class ArticleController extends Controller {
+	private ArticleService articleService;
+
 	public ArticleController (Connection conn, Scanner sc) {
-		this.conn = conn;
+		this.articleService = new ArticleService(conn);
 		this.sc = sc;
 	}
 	
@@ -28,35 +27,15 @@ public class ArticleController {
 		System.out.printf("내용 : ");
 		String body = sc.nextLine().trim();
 
-		SecSql sql = new SecSql();
-
-		sql.append("INSERT INTO article");
-		sql.append("SET regDate = NOW()");
-		sql.append(", updateDate = NOW()");
-		sql.append(", title = ?", title);
-		sql.append(", `body` = ?", body);
-
-		int id = DBUtil.insert(conn, sql);
+		int id = articleService.doWrite(title, body);
 
 		System.out.printf("%d번 글이 생성되었습니다\n", id);
 	}
 
 	public void showList() {
 		System.out.println("== 게시물 목록 ==");
-
-		List<Article> articles = new ArrayList<>();
-
-		SecSql sql = new SecSql();
-
-		sql.append("SELECT *");
-		sql.append("FROM article");
-		sql.append("ORDER BY id DESC");
-
-		List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
-
-		for (Map<String, Object> articleMap : articleListMap) {
-			articles.add(new Article(articleMap));
-		}
+		
+		List<Article> articles = articleService.getArticles();
 
 		if (articles.size() == 0) {
 			System.out.println("게시물이 없습니다");
@@ -79,7 +58,8 @@ public class ArticleController {
 		sql.append("FROM article");
 		sql.append("WHERE id = ?", id);
 
-		int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+		int articlesCount = articleService.isExistArticle();
+				DBUtil.selectRowIntValue(conn, sql);
 
 		if (articlesCount == 0) {
 			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);

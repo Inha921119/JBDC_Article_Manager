@@ -6,9 +6,7 @@ import java.util.Map;
 import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
-public class MemberDao {
-	
-	private Connection conn;
+public class MemberDao extends Dao {
 	public MemberDao (Connection conn) {
 		this.conn = conn;
 	}

@@ -7,9 +7,7 @@ import java.util.Map;
 import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
-public class ArticleDao {
-	private Connection conn;
-
+public class ArticleDao extends Dao {
 	public ArticleDao(Connection conn) {
 		this.conn = conn;
 	}

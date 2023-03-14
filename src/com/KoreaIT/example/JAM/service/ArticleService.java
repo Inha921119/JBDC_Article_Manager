@@ -29,4 +29,12 @@ public class ArticleService {
 		}
 		return null;
 	}
+
+	public int isExistArticle(int id) {
+		return articleDao.isExistArticle(id);
+	}
+
+	public void doModify(int id, String title, String body) {
+		articleDao.doModify(id, title, body);
+	}
 }

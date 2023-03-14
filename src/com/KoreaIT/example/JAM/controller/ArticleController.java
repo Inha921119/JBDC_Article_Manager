@@ -52,14 +52,7 @@ public class ArticleController extends Controller {
 	public void doModify(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		SecSql sql = new SecSql();
-
-		sql.append("SELECT COUNT(*)");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
-
-		int articlesCount = articleService.isExistArticle();
-				DBUtil.selectRowIntValue(conn, sql);
+		int articlesCount = articleService.isExistArticle(id);
 
 		if (articlesCount == 0) {
 			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
@@ -73,16 +66,8 @@ public class ArticleController extends Controller {
 		System.out.printf("수정할 내용 : ");
 		String body = sc.nextLine().trim();
 
-		sql = new SecSql();
-
-		sql.append("UPDATE article");
-		sql.append("SET updateDate = NOW()");
-		sql.append(", title = ?", title);
-		sql.append(", `body` = ?", body);
-		sql.append("WHERE id = ?", id);
-
-		DBUtil.update(conn, sql);
-
+		articleService.doModify(id, title, body);
+		
 		System.out.printf("%d번 글이 수정되었습니다\n", id);
 	}
 

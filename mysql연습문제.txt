@@ -770,3 +770,168 @@ FROM (
     GROUP BY E.deptId
 ) AS D
 WHERE D.`평균연봉` >= 5000;
+-------------------------------------------------------------------------------------------------
+# 데이터베이스 a4가 존재하면 삭제
+DROP DATABASE IF EXISTS a4;
+
+# 데이터베이스 a4 생성
+CREATE DATABASE a4;
+
+# 데이터베이스 a4 선택
+USE a4;
+
+# 회원 테이블 생성
+CREATE TABLE `member` (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id),
+    regDate DATETIME NOT NULL,
+    loginId CHAR(50) NOT NULL,
+    loginPw VARCHAR(100) NOT NULL,
+    `name` CHAR(100) NOT NULL
+);
+
+# 회원 2명 생성
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user1',
+loginPw = 'user1',
+`name` = '홍길동';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user2',
+loginPw = 'user2',
+`name` = '홍길순';
+
+# 회원 2배 증가 쿼리만들고 회원이 만명 넘을 때 까지 반복 실행
+INSERT INTO `member`
+(regDate, loginId, loginPw, `name`)
+SELECT NOW(), CONCAT("a", UUID()), '1234', '아무개'
+FROM `member`;
+
+# 회원수 확인
+SELECT COUNT(*)
+FROM `member`;
+
+# 검색속도 확인
+SELECT SQL_NO_CACHE *
+FROM `member`
+WHERE loginId = 'user1';
+
+# 유니크 인덱스를 loginID 칼럼에 걸기
+ALTER TABLE `member` ADD UNIQUE INDEX (`loginId`);
+
+# 검색속도 확인
+SELECT SQL_NO_CACHE *
+FROM `member`
+WHERE loginId = 'user1';
+
+# 인덱스 삭제
+ALTER TABLE `member` DROP INDEX `loginId`;
+
+# 회원 테이블 삭제
+DROP TABLE `member`;
+
+# 회원 테이블을 생성하는데, loginId에 uniqueIndex 까지 걸어주세요.
+CREATE TABLE `member` (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id),
+    regDate DATETIME NOT NULL,
+    loginId CHAR(50) UNIQUE NOT NULL,
+    loginPw VARCHAR(100) NOT NULL,
+    `name` CHAR(100) NOT NULL
+);
+
+# 회원 2명 생성
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user1',
+loginPw = 'user1',
+`name` = '홍길동';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user2',
+loginPw = 'user2',
+`name` = '홍길순';
+
+# 회원수 확인
+SELECT COUNT(*)
+FROM `member`;
+
+# 인덱스 쓰는지 확인
+EXPLAIN SELECT SQL_NO_CACHE *
+FROM `member`
+WHERE loginId = 'user1';
+
+# 게시물 테이블 생성
+CREATE TABLE article (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id),
+    regDate DATETIME NOT NULL,
+    title CHAR(200) NOT NULL,
+    `body` TEXT NOT NULL,
+    writerName CHAR(100) NOT NULL,
+    memberId INT(10) UNSIGNED NOT NULL
+);
+
+# 1번 회원이 글 1 작성
+INSERT INTO article
+SET regDate = NOW(),
+title = '글 1 제목',
+`body` = '글 1 내용',
+writerName = '홍길동',
+memberId = 1;
+
+# 2번 회원이 글 2 작성
+INSERT INTO article
+SET regDate = NOW(),
+title = '글 2 제목',
+`body` = '글 2 내용',
+writerName = '홍길순',
+memberId = 2;
+
+# 1번 회원이 글 3 작성
+INSERT INTO article
+SET regDate = NOW(),
+title = '글 3 제목',
+`body` = '글 3 내용',
+writerName = '홍길동',
+memberId = 1;
+
+# 전체글 조회
+SELECT * FROM article;
+
+# 1번회원의 이름변경 홍길동 => 홍길동2
+UPDATE `member`
+SET `name` = '홍길동2'
+WHERE id = 1;
+
+# 전체글 조회, 여전히 게시물 테이블에는 이전 이름이 남아 있음
+SELECT * FROM article;
+
+# 게시물 테이블에서 writerName 삭제
+ALTER TABLE article DROP COLUMN writerName;
+
+# 전체글 조회, 여전히 게시물 테이블에는 이전 이름이 남아 있음
+SELECT * FROM article WHERE id = 1;
+SELECT * FROM `member` WHERE id = 1;
+
+# INNER JOIN 을 통해서 두 테이블을 조회한 결과를 합침
+SELECT *
+FROM article
+INNER JOIN `member`;
+
+# INNER JOIN 을 통해서 두 테이블을 조회한 결과를 합침, 올바른 조인 조건
+
+## 이걸로 조인조건을 걸 칼럼 조사
+SELECT article.id, article.memberId, member.id AS "회원테이블_번호"
+FROM article
+INNER JOIN `member`;
+
+# 조인 완성
+SELECT article.*, member.id AS `mId`, member.name AS memberName
+FROM article
+INNER JOIN `member`
+ON article.memberId = member.id
+WHERE article.id = 1;

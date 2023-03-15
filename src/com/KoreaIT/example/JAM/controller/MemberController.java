@@ -10,24 +10,25 @@ import com.KoreaIT.example.JAM.service.MemberService;
 public class MemberController extends Controller {
 	private MemberService memberService;
 	private boolean isLogined;
-	
-	public MemberController (Connection conn, Scanner sc) {
+
+	public MemberController(Connection conn, Scanner sc) {
 		this.memberService = new MemberService(conn);
 		this.sc = sc;
 		this.isLogined = false;
 	}
-	public void doJoin () {
+
+	public void doJoin() {
 		String loginId = null;
 		String loginPw = null;
 		String loginPwChk = null;
 		String name = null;
 		String phoneNum = null;
-		
+
 		if (isLogined) {
 			System.out.println("로그아웃 후 이용가능합니다.");
 			return;
 		}
-		
+
 		System.out.println("== 회원 가입 ==");
 
 		while (true) {
@@ -39,7 +40,7 @@ public class MemberController extends Controller {
 				continue;
 			}
 
-			boolean isLoginIdDup = memberService.isLoginIdDup(loginId); 
+			boolean isLoginIdDup = memberService.isLoginIdDup(loginId);
 
 			if (isLoginIdDup) {
 				System.out.println("사용중인 아이디입니다");
@@ -49,7 +50,7 @@ public class MemberController extends Controller {
 			System.out.println("사용 가능한 아이디입니다.");
 
 			break;
-		} 
+		}
 
 		while (true) {
 			System.out.printf("비밀번호 : ");
@@ -113,20 +114,20 @@ public class MemberController extends Controller {
 			break;
 		}
 
-		
 		memberService.doJoin(loginId, loginPw, name, phoneNum);
 
 		System.out.printf("%s님 회원가입이 완료되었습니다.\n", loginId);
 	}
-	public void doLogin () {
+
+	public void doLogin() {
 		String loginId = null;
 		String loginPw = null;
-		
+
 		if (isLogined) {
 			System.out.println("로그아웃 후 이용가능합니다.");
 			return;
 		}
-		
+
 		System.out.println("== 회원 로그인 ==");
 
 		while (true) {
@@ -137,14 +138,14 @@ public class MemberController extends Controller {
 				System.out.println("아이디를 입력해주세요");
 				continue;
 			}
-			
+
 			boolean isLoginIdChk = memberService.isLoginIdDup(loginId);
 
 			if (isLoginIdChk) {
 				break;
 			}
 			System.out.println("아이디를 확인해주세요");
-		} 
+		}
 
 		while (true) {
 			System.out.printf("비밀번호 : ");
@@ -156,7 +157,7 @@ public class MemberController extends Controller {
 			}
 
 			Map<String, Object> memberMap = memberService.getMemberByLoginId(loginId);
-					
+
 			Member member = new Member(memberMap);
 
 			if (member.loginPw.equals(loginPw)) {
@@ -166,5 +167,16 @@ public class MemberController extends Controller {
 			}
 			System.out.println("비밀번호를 확인해주세요");
 		}
+	}
+
+	public void doLogout() {
+		if (!isLogined) {
+			System.out.println("로그인 후 이용가능합니다.");
+			return;
+		}
+
+		isLogined = memberService.isLogined();
+		System.out.println("로그아웃이 완료되었습니다");
+		return;
 	}
 }

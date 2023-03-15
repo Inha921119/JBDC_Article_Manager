@@ -36,7 +36,7 @@ public class ArticleDao extends Dao {
 		return DBUtil.selectRows(conn, sql);
 	}
 
-	public int isExistArticle(int id) {
+	public int getArtcleCount(int id) {
 		SecSql sql = new SecSql();
 
 		sql.append("SELECT COUNT(*)");

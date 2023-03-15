@@ -9,10 +9,12 @@ import com.KoreaIT.example.JAM.service.MemberService;
 
 public class MemberController extends Controller {
 	private MemberService memberService;
+	private boolean isLogined;
 	
 	public MemberController (Connection conn, Scanner sc) {
 		this.memberService = new MemberService(conn);
 		this.sc = sc;
+		this.isLogined = false;
 	}
 	public void doJoin () {
 		String loginId = null;
@@ -20,7 +22,12 @@ public class MemberController extends Controller {
 		String loginPwChk = null;
 		String name = null;
 		String phoneNum = null;
-
+		
+		if (isLogined) {
+			System.out.println("로그아웃 후 이용가능합니다.");
+			return;
+		}
+		
 		System.out.println("== 회원 가입 ==");
 
 		while (true) {
@@ -114,6 +121,12 @@ public class MemberController extends Controller {
 	public void doLogin () {
 		String loginId = null;
 		String loginPw = null;
+		
+		if (isLogined) {
+			System.out.println("로그아웃 후 이용가능합니다.");
+			return;
+		}
+		
 		System.out.println("== 회원 로그인 ==");
 
 		while (true) {
@@ -148,6 +161,7 @@ public class MemberController extends Controller {
 
 			if (member.loginPw.equals(loginPw)) {
 				System.out.println("로그인에 성공하였습니다.");
+				isLogined = memberService.isLogined();
 				break;
 			}
 			System.out.println("비밀번호를 확인해주세요");

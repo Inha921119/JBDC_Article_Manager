@@ -30,12 +30,19 @@ public class ArticleService {
 		return articles;
 	}
 	
-	public Map<String, Object> getArticle(int id) {
-		return articleDao.getArticle(id);
+	public Article getArticle(int id) {
+		
+		Map<String, Object> articleMap = articleDao.getArticle(id);
+		
+		if (articleMap.isEmpty()) {
+			System.out.printf("%d번 게시글은 존재하지 않습니다.", id);
+			return null;
+		}
+		return new Article(articleMap);
 	}
 
-	public int isExistArticle(int id) {
-		return articleDao.isExistArticle(id);
+	public int getArtcleCount(int id) {
+		return articleDao.getArtcleCount(id);
 	}
 
 	public void doModify(int id, String title, String body) {

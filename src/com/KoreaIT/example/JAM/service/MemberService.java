@@ -27,4 +27,8 @@ public class MemberService {
 	public Map<String, Object> getMemberByLoginId(String loginId) {
 		return memberDao.getMemberByLoginId(loginId);
 	}
+
+	public boolean isLogined() {
+		return memberDao.isLogined();
+	}
 }

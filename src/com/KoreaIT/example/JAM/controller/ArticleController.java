@@ -2,7 +2,6 @@ package com.KoreaIT.example.JAM.controller;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Article;
@@ -49,9 +48,9 @@ public class ArticleController extends Controller {
 	public void doModify(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		int articlesCount = articleService.isExistArticle(id);
+		int articleCount = articleService.getArtcleCount(id);
 
-		if (articlesCount == 0) {
+		if (articleCount == 0) {
 			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
 			return;
 		}
@@ -71,16 +70,14 @@ public class ArticleController extends Controller {
 	public void showDetail(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		Map<String, Object> articleMap = articleService.getArticle(id);
-				
-		if (articleMap.isEmpty()) {
-			System.out.printf("%d번 게시글은 존재하지 않습니다.", id);
+		Article article = articleService.getArticle(id);
+					
+		if (article == null) {
+			System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 			return;
 		}
-
+		
 		System.out.printf("==== %d번 게시글 상세보기 ====\n", id);
-
-		Article article = new Article(articleMap);
 
 		System.out.printf("제목 :	%s\n", article.title);
 		System.out.printf("작성날짜 : %s\n", article.regDate);
@@ -93,9 +90,9 @@ public class ArticleController extends Controller {
 	public void dodelete(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		int articlesCount = articleService.isExistArticle(id);
+		int articleCount = articleService.getArtcleCount(id);
 	
-		if (articlesCount == 0) {
+		if (articleCount == 0) {
 			System.out.printf("%d번 글은 존재하지 않습니다.\n", id);
 			return;
 		}

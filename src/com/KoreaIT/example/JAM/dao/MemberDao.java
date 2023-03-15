@@ -7,8 +7,11 @@ import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
 public class MemberDao extends Dao {
+	private boolean isLoginedChk;
+	
 	public MemberDao (Connection conn) {
 		this.conn = conn;
+		this.isLoginedChk = false;
 	}
 
 	public boolean isLoginIdDup(String loginId) {
@@ -54,6 +57,12 @@ public class MemberDao extends Dao {
 		return DBUtil.selectRow(conn, sql);
 	}
 
-
-
+	public boolean isLogined() {
+		if (isLoginedChk) {
+			isLoginedChk = false;
+		} else {
+			isLoginedChk = true;
+		}
+		return isLoginedChk;
+	}
 }

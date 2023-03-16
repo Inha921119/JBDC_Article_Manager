@@ -5,15 +5,14 @@ import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Member;
 import com.KoreaIT.example.JAM.service.MemberService;
+import com.KoreaIT.example.JAM.session.Session;
 
 public class MemberController extends Controller {
 	private MemberService memberService;
-	private boolean isLogined;
 
 	public MemberController(Connection conn, Scanner sc) {
 		this.memberService = new MemberService(conn);
 		this.sc = sc;
-		this.isLogined = false;
 	}
 
 	public void doJoin() {
@@ -23,7 +22,7 @@ public class MemberController extends Controller {
 		String name = null;
 		String phoneNum = null;
 
-		if (isLogined) {
+		if (Session.isLogined()) {
 			System.out.println("로그아웃 후 이용가능합니다.");
 			return;
 		}
@@ -122,7 +121,7 @@ public class MemberController extends Controller {
 		String loginId = null;
 		String loginPw = null;
 
-		if (isLogined) {
+		if (Session.isLogined()) {
 			System.out.println("로그아웃 후 이용가능합니다.");
 			return;
 		}
@@ -160,26 +159,26 @@ public class MemberController extends Controller {
 				continue;
 			}
 			
-			System.out.println("로그인에 성공하였습니다.");
-			isLogined = memberService.isLogined();
+			Session.login(member);
 			memberService.updateLastLoginedDate(loginId);
+			System.out.println("로그인에 성공하였습니다.");
 			break;
 		}
 	}
 
 	public void doLogout() {
-		if (!isLogined) {
+		if (!Session.isLogined()) {
 			System.out.println("로그인 후 이용가능합니다.");
 			return;
 		}
 
-		isLogined = memberService.isLogined();
+		Session.logout();
 		System.out.println("로그아웃이 완료되었습니다");
 		return;
 	}
 
 	public void showProfile() {
-		if (!isLogined) {
+		if (!Session.isLogined()) {
 			System.out.println("로그인 후 이용가능합니다.");
 			return;
 		}
@@ -188,7 +187,7 @@ public class MemberController extends Controller {
 		System.out.println("==== 내 정보 ====");
 
 		System.out.printf("아이디		: %s\n", member.loginId);
-		System.out.printf("가입날짜		: %s\n", member.regDate);
+		System.out.printf("가입날짜		: %s\n",member.regDate);
 		if (!member.regDate.equals(member.lastLoginedDate)) {
 			System.out.printf("마지막 접속날짜	: %s\n", member.lastLoginedDate);
 		}

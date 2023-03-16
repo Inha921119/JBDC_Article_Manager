@@ -34,10 +34,6 @@ public class MemberService {
 		}
 		return new Member(memberMap);
 	}
-
-	public boolean isLogined() {
-		return memberDao.isLogined();
-	}
 	
 	public void updateLastLoginedDate(String loginId) {
 		memberDao.updateLastLoginedDate(loginId);

@@ -7,12 +7,10 @@ import com.KoreaIT.example.JAM.util.DBUtil;
 import com.KoreaIT.example.JAM.util.SecSql;
 
 public class MemberDao extends Dao {
-	private boolean isLoginedChk;
 	private String nowLoginedId;
 	
 	public MemberDao (Connection conn) {
 		this.conn = conn;
-		this.isLoginedChk = false;
 		this.nowLoginedId = null;
 	}
 
@@ -59,15 +57,6 @@ public class MemberDao extends Dao {
 		nowLoginedId = loginId;
 		
 		return DBUtil.selectRow(conn, sql);
-	}
-
-	public boolean isLogined() {
-		if (isLoginedChk) {
-			isLoginedChk = false;
-		} else {
-			isLoginedChk = true;
-		}
-		return isLoginedChk;
 	}
 
 	public void updateLastLoginedDate(String loginId) {

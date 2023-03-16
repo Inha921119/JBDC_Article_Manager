@@ -51,8 +51,14 @@ phoneNum = '00000000000';
 ALTER TABLE `member` MODIFY COLUMN loginId VARCHAR(50) NOT NULL UNIQUE;
 ALTER TABLE `member` MODIFY COLUMN phoneNum VARCHAR(50) NOT NULL UNIQUE;
 
-ALTER TABLE article ADD COLUMN writerId INT UNSIGNED NOT NULL UNIQUE AFTER updatedate;
+ALTER TABLE article ADD COLUMN writerId INT UNSIGNED NOT NULL AFTER updatedate;
 
 SELECT *
 FROM `member`
 WHERE loginId = 'test1';
+
+SELECT article.*, member.name
+FROM article
+INNER JOIN `member`
+ON article.writerId = member.id
+WHERE member.id = 1;

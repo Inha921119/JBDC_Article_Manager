@@ -17,7 +17,7 @@ public class Article {
 		this.updateDate = (LocalDateTime) articleMap.get("updateDate");
 		this.title = (String) articleMap.get("title");
 		this.body = (String) articleMap.get("body");
-		this.writerId = (int) articleMap.get("writerId");
+		this.writerId = (int) articleMap.get("writerName");
 	}
 
 	@Override

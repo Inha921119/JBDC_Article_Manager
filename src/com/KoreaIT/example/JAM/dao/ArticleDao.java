@@ -63,7 +63,8 @@ public class ArticleDao extends Dao {
 		
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT article.*, member.name");
+		sql.append("SELECT article.*");
+		sql.append(", member.name AS writerName");
 		sql.append("FROM article");
 		sql.append("INNER JOIN `member`");
 		sql.append("ON article.writerId = member.id");

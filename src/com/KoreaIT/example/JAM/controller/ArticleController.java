@@ -44,10 +44,10 @@ public class ArticleController extends Controller {
 			return;
 		}
 
-		System.out.println("번호	|	제목");
+		System.out.println("번호	| 제목");
 
 		for (Article article : articles) {
-			System.out.printf("%d	|	%s\n", article.id, article.title);
+			System.out.printf("%d	| %s\n", article.id, article.title);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class ArticleController extends Controller {
 		System.out.printf("==== %d번 게시글 상세보기 ====\n", id);
 		
 		System.out.printf("제목 :	%s\n", article.title);
-		System.out.printf("작성자 : 	%s\n", article.writerId);
+		System.out.printf("작성자 : 	%s\n", article.writerName);
 		System.out.printf("작성날짜 : %s\n", Util.changeDateToString(article.regDate));
 		if (!article.regDate.equals(article.updateDate)) {
 			System.out.printf("수정날짜 : %s\n", Util.changeDateToString(article.updateDate));

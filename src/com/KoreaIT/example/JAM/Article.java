@@ -10,6 +10,7 @@ public class Article {
 	public String title;
 	public String body;
 	public int writerId;
+	public String writerName;
 
 	public Article(Map<String, Object> articleMap) {
 		this.id = (int) articleMap.get("id");
@@ -17,7 +18,8 @@ public class Article {
 		this.updateDate = (LocalDateTime) articleMap.get("updateDate");
 		this.title = (String) articleMap.get("title");
 		this.body = (String) articleMap.get("body");
-		this.writerId = (int) articleMap.get("writerName");
+		this.writerId = (int) articleMap.get("writerId");
+		this.writerName = (String) articleMap.get("writerName");
 	}
 
 	@Override

@@ -46,4 +46,10 @@ public class MemberService {
 		return new Member(memberMap);
 	}
 
+	public Member getMemberById(int id) {
+		Map<String, Object> memberMap = memberDao.getMemberById(id);
+
+		return new Member(memberMap);
+	}
+
 }

@@ -12,7 +12,7 @@ public class ArticleDao extends Dao {
 		this.conn = conn;
 	}
 
-	public int doWrite(String title, String body) {
+	public int doWrite(String title, String body, int loginedMemberId) {
 
 		SecSql sql = new SecSql();
 
@@ -21,7 +21,8 @@ public class ArticleDao extends Dao {
 		sql.append(", updateDate = NOW()");
 		sql.append(", title = ?", title);
 		sql.append(", `body` = ?", body);
-
+		sql.append(", writerId = ?", loginedMemberId);
+		
 		return DBUtil.insert(conn, sql);
 	}
 

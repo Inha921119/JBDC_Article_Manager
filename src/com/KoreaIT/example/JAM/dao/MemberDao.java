@@ -72,4 +72,14 @@ public class MemberDao extends Dao {
 	public String getLoginedId() {
 		return nowLoginedId;
 	}
+
+	public Map<String, Object> getMemberById(int id) {
+		SecSql sql = new SecSql();
+
+		sql.append("SELECT *");
+		sql.append("FROM `member`");
+		sql.append("WHERE id = ?", id);
+			
+		return DBUtil.selectRow(conn, sql);
+	}
 }

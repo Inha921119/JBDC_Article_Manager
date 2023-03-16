@@ -6,6 +6,7 @@ import java.util.Scanner;
 import com.KoreaIT.example.JAM.Member;
 import com.KoreaIT.example.JAM.service.MemberService;
 import com.KoreaIT.example.JAM.session.Session;
+import com.KoreaIT.example.JAM.util.Util;
 
 public class MemberController extends Controller {
 	private MemberService memberService;
@@ -187,9 +188,9 @@ public class MemberController extends Controller {
 		System.out.println("==== 내 정보 ====");
 
 		System.out.printf("아이디		: %s\n", member.loginId);
-		System.out.printf("가입날짜		: %s\n",member.regDate);
+		System.out.printf("가입날짜		: %s\n", Util.changeDateToString(member.regDate).substring(0, 10));
 		if (!member.regDate.equals(member.lastLoginedDate)) {
-			System.out.printf("마지막 접속날짜	: %s\n", member.lastLoginedDate);
+			System.out.printf("마지막 접속날짜	: %s\n", Util.changeDateToString(member.lastLoginedDate).substring(0, 10));
 		}
 		System.out.printf("이름		: %s\n", member.name);
 		System.out.printf("전화번호		: %s\n", member.phoneNum);

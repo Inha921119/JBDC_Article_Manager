@@ -81,7 +81,7 @@ public class ArticleController extends Controller {
 
 		System.out.printf("제목 :	%s\n", article.title);
 		System.out.printf("작성날짜 : %s\n", article.regDate);
-		if (article.regDate.equals(article.updateDate) == false) {
+		if (!article.regDate.equals(article.updateDate)) {
 			System.out.printf("수정날짜 : %s\n", article.updateDate);
 		}
 		System.out.printf("내용 : 	%s\n", article.body);

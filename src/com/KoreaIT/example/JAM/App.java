@@ -28,12 +28,19 @@ public class App {
 				System.out.printf("명령어) ");
 				String cmd = sc.nextLine().trim();
 				
+				if (cmd.equals("exit")) {
+					System.out.println("== 프로그램 종료 ==");
+					break;
+				}
+				
 				if (cmd.equals("member join")) {
 					memberController.doJoin();
 				} else if (cmd.equals("member login")) {
 					memberController.doLogin();
 				} else if (cmd.equals("member logout")) {
 					memberController.doLogout();
+				} else if (cmd.equals("member profile")) {
+					memberController.showProfile();
 				} else if (cmd.equals("article write")) {
 					articleController.doWrite();
 				} else if (cmd.equals("article list")) {
@@ -44,11 +51,8 @@ public class App {
 					articleController.showDetail(cmd);
 				} else if (cmd.startsWith("article delete ")) {
 					articleController.dodelete(cmd);
-				}
-
-				if (cmd.equals("exit")) {
-					System.out.println("== 프로그램 종료 ==");
-					break;
+				} else {
+					System.out.println("명령어를 확인해주세요");
 				}
 			}
 

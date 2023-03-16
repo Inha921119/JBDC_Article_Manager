@@ -1,7 +1,6 @@
 package com.KoreaIT.example.JAM.controller;
 
 import java.sql.Connection;
-import java.util.Map;
 import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Member;
@@ -139,15 +138,6 @@ public class MemberController extends Controller {
 				continue;
 			}
 
-			boolean isLoginIdChk = memberService.isLoginIdDup(loginId);
-
-			if (isLoginIdChk) {
-				break;
-			}
-			System.out.println("아이디를 확인해주세요");
-		}
-
-		while (true) {
 			System.out.printf("비밀번호 : ");
 			loginPw = sc.nextLine().trim();
 
@@ -155,17 +145,25 @@ public class MemberController extends Controller {
 				System.out.println("비밀번호를 입력해주세요");
 				continue;
 			}
-
-			Map<String, Object> memberMap = memberService.getMemberByLoginId(loginId);
-
-			Member member = new Member(memberMap);
-
-			if (member.loginPw.equals(loginPw)) {
-				System.out.println("로그인에 성공하였습니다.");
-				isLogined = memberService.isLogined();
-				break;
+			
+			boolean isLoginIdChk = memberService.isLoginIdDup(loginId);
+			
+			if (!isLoginIdChk) {
+				System.out.printf("%s회원은 존재하지 않습니다.\n", loginId);
+				continue;
 			}
-			System.out.println("비밀번호를 확인해주세요");
+
+			Member member = memberService.getMemberByLoginId(loginId);
+			
+			if (!member.loginPw.equals(loginPw)) {
+				System.out.println("비밀번호를 확인해주세요");
+				continue;
+			}
+			
+			System.out.println("로그인에 성공하였습니다.");
+			isLogined = memberService.isLogined();
+			memberService.updateLastLoginedDate(loginId);
+			break;
 		}
 	}
 
@@ -178,5 +176,23 @@ public class MemberController extends Controller {
 		isLogined = memberService.isLogined();
 		System.out.println("로그아웃이 완료되었습니다");
 		return;
+	}
+
+	public void showProfile() {
+		if (!isLogined) {
+			System.out.println("로그인 후 이용가능합니다.");
+			return;
+		}
+		Member member = memberService.getMember();
+		
+		System.out.println("==== 내 정보 ====");
+
+		System.out.printf("아이디		: %s\n", member.loginId);
+		System.out.printf("가입날짜		: %s\n", member.regDate);
+		if (!member.regDate.equals(member.lastLoginedDate)) {
+			System.out.printf("마지막 접속날짜	: %s\n", member.lastLoginedDate);
+		}
+		System.out.printf("이름		: %s\n", member.name);
+		System.out.printf("전화번호		: %s\n", member.phoneNum);
 	}
 }

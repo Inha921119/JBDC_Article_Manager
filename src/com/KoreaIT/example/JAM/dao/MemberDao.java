@@ -8,10 +8,12 @@ import com.KoreaIT.example.JAM.util.SecSql;
 
 public class MemberDao extends Dao {
 	private boolean isLoginedChk;
+	private String nowLoginedId;
 	
 	public MemberDao (Connection conn) {
 		this.conn = conn;
 		this.isLoginedChk = false;
+		this.nowLoginedId = null;
 	}
 
 	public boolean isLoginIdDup(String loginId) {
@@ -54,6 +56,8 @@ public class MemberDao extends Dao {
 		sql.append("FROM `member`");
 		sql.append("WHERE loginId = ?", loginId);
 		
+		nowLoginedId = loginId;
+		
 		return DBUtil.selectRow(conn, sql);
 	}
 
@@ -64,5 +68,19 @@ public class MemberDao extends Dao {
 			isLoginedChk = true;
 		}
 		return isLoginedChk;
+	}
+
+	public void updateLastLoginedDate(String loginId) {
+		SecSql sql = new SecSql();
+
+		sql.append("UPDATE `member`");
+		sql.append("SET lastLoginedDate = NOW()");
+		sql.append("WHERE loginId = ?", loginId);
+
+		DBUtil.update(conn, sql);
+	}
+	
+	public String getLoginedId() {
+		return nowLoginedId;
 	}
 }

@@ -9,6 +9,7 @@ public class Article {
 	public LocalDateTime updateDate;
 	public String title;
 	public String body;
+	public int writerId;
 	public String writerName;
 
 	public Article(Map<String, Object> articleMap) {
@@ -17,13 +18,14 @@ public class Article {
 		this.updateDate = (LocalDateTime) articleMap.get("updateDate");
 		this.title = (String) articleMap.get("title");
 		this.body = (String) articleMap.get("body");
+		this.writerId = (int) articleMap.get("writerId");
 		this.writerName = (String) articleMap.get("writerName");
 	}
 
 	@Override
 	public String toString() {
 		return "Article [id=" + id + ", regDate=" + regDate + ", updateDate=" + updateDate + ", title=" + title
-				+ ", body=" + body + ", writerName=" + writerName + "]";
+				+ ", body=" + body + ", writerId=" + writerId + "]";
 	}
 	
 }

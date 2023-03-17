@@ -30,8 +30,10 @@ public class ArticleDao extends Dao {
 		
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT *");
-		sql.append("FROM article");
+		sql.append("SELECT a.*, m.name AS writerName");
+		sql.append("FROM article AS a");
+		sql.append("INNER JOIN `member` AS m");
+		sql.append("ON a.writerId = m.id");
 		sql.append("ORDER BY id DESC");
 		
 		return DBUtil.selectRows(conn, sql);
@@ -63,12 +65,12 @@ public class ArticleDao extends Dao {
 		
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT article.*");
-		sql.append(", member.name AS writerName");
-		sql.append("FROM article");
-		sql.append("INNER JOIN `member`");
-		sql.append("ON article.writerId = member.id");
-		sql.append("WHERE id = ?", id);
+		sql.append("SELECT a.*, m.name AS writerName");
+		sql.append("FROM article AS a");
+		sql.append("INNER JOIN `member` AS m");
+		sql.append("ON a.writerId = m.id");
+		sql.append("WHERE a.id = ?", id);
+		sql.append("ORDER BY id DESC");
 		
 		return DBUtil.selectRow(conn, sql);
 	}

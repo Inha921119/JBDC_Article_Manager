@@ -35,7 +35,7 @@ public class ArticleService {
 		Map<String, Object> articleMap = articleDao.getArticle(id);
 		
 		if (articleMap.isEmpty()) {
-			System.out.printf("%d번 게시글은 존재하지 않습니다.", id);
+			System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 			return null;
 		}
 		return new Article(articleMap);

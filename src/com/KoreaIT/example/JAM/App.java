@@ -50,7 +50,7 @@ public class App {
 				} else if (cmd.startsWith("article detail ")) {
 					articleController.showDetail(cmd);
 				} else if (cmd.startsWith("article delete ")) {
-					articleController.dodelete(cmd);
+					articleController.doDelete(cmd);
 				} else {
 					System.out.println("명령어를 확인해주세요");
 				}

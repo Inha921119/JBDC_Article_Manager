@@ -44,10 +44,10 @@ public class ArticleController extends Controller {
 			return;
 		}
 
-		System.out.println("번호	| 제목");
+		System.out.println("번호	| 제목			| 작성자	| 작성날짜");
 
 		for (Article article : articles) {
-			System.out.printf("%d	| %s\n", article.id, article.title);
+			System.out.printf("%d	| %s		| %s	| %s\n", article.id, article.title, article.writerName, Util.changeDateToString(article.updateDate).substring(0, 10));
 		}
 	}
 
@@ -79,11 +79,10 @@ public class ArticleController extends Controller {
 
 	public void showDetail(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
-
+		
 		Article article = articleService.getArticle(id);
 					
 		if (article == null) {
-			System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
 			return;
 		}
 		
@@ -98,7 +97,7 @@ public class ArticleController extends Controller {
 		System.out.printf("내용 : 	%s\n", article.body);
 	}
 
-	public void dodelete(String cmd) {
+	public void doDelete(String cmd) {
 		if (!Session.isLogined()) {
 			System.out.println("로그인 후 이용가능합니다.");
 			return;

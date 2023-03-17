@@ -57,8 +57,15 @@ SELECT *
 FROM `member`
 WHERE loginId = 'test1';
 
-SELECT article.*, member.name
-FROM article
-INNER JOIN `member`
-ON article.writerId = member.id
-WHERE member.id = 1;
+SELECT a.*, m.name AS writerName
+FROM article AS a
+INNER JOIN `member` AS m
+ON a.writerId = m.id
+ORDER BY id DESC;
+
+SELECT a.*, m.name AS writerName
+FROM article AS a
+INNER JOIN `member` AS m
+ON a.writerId = m.id
+WHERE m.id = 1
+ORDER BY id DESC;
